@@ -116,8 +116,14 @@ class AlarmManager:
     def create_tray_icon(self):
         """创建托盘图标"""
         # 加载图标
-        icon_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'icon.png')
-        image = Image.open(icon_path)
+        try:
+            # 尝试从打包后的路径获取图标
+            base_path = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
+            icon_path = os.path.join(base_path, 'icon.png')
+            image = Image.open(icon_path)
+        except Exception as e:
+            # 如果加载失败，创建一个简单的默认图标
+            image = Image.new('RGB', (32, 32), color='red')
         
         # 创建托盘菜单
         menu = (
