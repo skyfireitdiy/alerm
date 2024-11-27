@@ -183,8 +183,8 @@ class AlarmManager:
                 messagebox.showinfo("提示", "已启用开机自启动")
                 
             winreg.CloseKey(key)
-            # 更新菜单项状态
-            item.checked = not item.checked
+            # 更新菜单 - 移除直接设置checked属性的代码
+            icon.update_menu()  # 刷新菜单状态
             
         except Exception as e:
             messagebox.showerror("错误", f"设置开机自启动失败: {str(e)}")
