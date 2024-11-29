@@ -38,7 +38,17 @@ class AlarmManager:
         
     def init_database(self):
         """初始化SQLite数据库"""
-        conn = sqlite3.connect('alarms.db')
+        # 获取数据库文件的完整路径
+        if getattr(sys, 'frozen', False):
+            # 如果是打包后的exe
+            app_dir = os.path.dirname(sys.executable)
+        else:
+            # 如果是.pyw脚本
+            app_dir = os.path.dirname(os.path.abspath(__file__))
+            
+        db_path = os.path.join(app_dir, 'alarms.db')
+        
+        conn = sqlite3.connect(db_path)
         c = conn.cursor()
         c.execute('''CREATE TABLE IF NOT EXISTS alarms
                     (id INTEGER PRIMARY KEY AUTOINCREMENT,
