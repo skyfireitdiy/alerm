@@ -302,7 +302,13 @@ class AlarmManager:
             self.tree.delete(item)
             
         # 从数据库加载闹钟
-        conn = sqlite3.connect('alarms.db')
+        if getattr(sys, 'frozen', False):
+            app_dir = os.path.dirname(sys.executable)
+        else:
+            app_dir = os.path.dirname(os.path.abspath(__file__))
+        db_path = os.path.join(app_dir, 'alarms.db')
+        
+        conn = sqlite3.connect(db_path)
         c = conn.cursor()
         c.execute("SELECT * FROM alarms ORDER BY datetime")
         alarms = c.fetchall()
@@ -326,7 +332,7 @@ class AlarmManager:
                 tag = 'expired'
                 status_text = '已过期'
                 # 更新数据库中的状态
-                conn = sqlite3.connect('alarms.db')
+                conn = sqlite3.connect(db_path)
                 c = conn.cursor()
                 c.execute("UPDATE alarms SET status='expired' WHERE id=? AND status='active'", (alarm_id,))
                 conn.commit()
@@ -340,7 +346,13 @@ class AlarmManager:
     def check_alarms(self):
         """检查闹钟是否到期"""
         while True:
-            conn = sqlite3.connect('alarms.db')
+            if getattr(sys, 'frozen', False):
+                app_dir = os.path.dirname(sys.executable)
+            else:
+                app_dir = os.path.dirname(os.path.abspath(__file__))
+            db_path = os.path.join(app_dir, 'alarms.db')
+            
+            conn = sqlite3.connect(db_path)
             c = conn.cursor()
             c.execute("SELECT * FROM alarms WHERE status='active'")
             alarms = c.fetchall()
